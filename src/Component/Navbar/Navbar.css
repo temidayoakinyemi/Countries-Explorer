@@ -1,12 +1,21 @@
-:root { 
+:root {
   --text-color: #111517;
+  --bg-color: #ffffff;
+  --element-bg: #ffffff;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode {
+  --text-color: #ffffff;
+  --bg-color: #202c37;
+  --element-bg: #2b3945;
+  --shadow-color: rgba(0, 0, 0, 0.3);
 }
 
 nav {
   width: 100%;
   height: 80px;
-  /* background-color: #FFFFFF; */
-  padding: 0 10%;
+  padding: 0 5%;
   position: fixed;
   top: 0;
   left: 0;
@@ -14,46 +23,57 @@ nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  box-shadow: 0 2px 6px var(--shadow-color);
   background-color: var(--element-bg);
   color: var(--text-color);
-}
-
-.navbar-h1 {
-  font-size: 24px;
-  font-weight: bolder;
-  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .nav-content {
   width: 100%;
+  max-width: 1440px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-nav ul {
-  display: flex;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-}
-
-nav ul li {
-  display: flex;
-  align-items: center;
-  list-style: none;
-  margin-left: 20px;
-  font-size: 16px;
-  cursor: pointer;
+.navbar-h1 {
+  font-size: 18px;
+  font-weight: 800;
   color: var(--text-color);
 }
 
+.mode-toggle {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+}
+
 .moon-icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   fill: var(--text-color);
   margin-right: 8px;
   transition: fill 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .navbar-h1 {
+    font-size: 14px;
+  }
+
+  .mode-toggle {
+    font-size: 12px;
+  }
+
+  .moon-icon {
+    width: 16px;
+    height: 16px;
+  }
 }

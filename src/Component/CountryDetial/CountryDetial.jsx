@@ -7,23 +7,48 @@ const CountryDetail = () => {
   const navigate = useNavigate();
   const { name } = useParams();
   const [country, setCountry] = useState(state);
+  const [borderCountries, setBorderCountries] = useState([]); 
 
   useEffect(() => {
     const fetchCountry = async () => {
       try {
         const res = await fetch(
-          `https://restcountries.com/v3.1/name/${name}?fullText=true`
+          `https://restcountries.com/v3.1/name/${encodeURIComponent(
+            name
+          )}?fullText=true`
         );
         const data = await res.json();
-        if (Array.isArray(data)) {
-          setCountry(data[0]);
-        }
+        if (Array.isArray(data)) setCountry(data[0]);
       } catch (err) {
         console.error("Error fetching country:", err);
       }
     };
     fetchCountry();
   }, [name]);
+
+  useEffect(() => {
+    const fetchBorders = async () => {
+      if (!country?.borders || country.borders.length === 0) {
+        setBorderCountries([]);
+        return;
+      }
+      try {
+        const codes = country.borders.join(",");
+        const res = await fetch(
+          `https://restcountries.com/v3.1/alpha?codes=${codes}&fields=name,cca3`
+        );
+        const data = await res.json();
+        const mapped = Array.isArray(data)
+          ? data.map((c) => ({ code: c.cca3, name: c.name?.common }))
+          : [];
+        setBorderCountries(mapped);
+      } catch (e) {
+        console.error("Error fetching border countries:", e);
+        setBorderCountries([]);
+      }
+    };
+    fetchBorders();
+  }, [country?.borders]);
 
   if (!country) {
     return (
@@ -63,6 +88,11 @@ const CountryDetail = () => {
   const languages = country.languages
     ? Object.values(country.languages).join(", ")
     : "—";
+
+  const goToBorder = (border) => {
+    if (!border?.name) return;
+    navigate(`/country/${encodeURIComponent(border.name)}`, { state: border });
+  };
 
   return (
     <div className="container country-detail">
@@ -128,10 +158,19 @@ const CountryDetail = () => {
 
           <div className="border-countries">
             <strong>Border Countries:</strong>{" "}
-            {country.borders && country.borders.length > 0 ? (
-              country.borders.map((b, i) => (
-                <span key={i} className="border-box">
-                  {b}
+            {borderCountries.length > 0 ? (
+              borderCountries.map((b) => (
+                <span
+                  key={b.code}
+                  className="border-box"
+                  onClick={() => goToBorder(b)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") goToBorder(b);
+                  }}
+                >
+                  {b.code} 
                 </span>
               ))
             ) : (
